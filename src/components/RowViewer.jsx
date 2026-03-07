@@ -24,6 +24,7 @@ export function RowViewer({ rule, grid }) {
   const hasGrouping = !isNaN(grouping) && grouping >= 1; // check that grouping # input is valid
 
   const displayValue = useMemo(() => {
+    // display dash if empty or user input is invalid
     if (!isValid) return "—";
     // get row from grid if user entered row already happens to have been calculated to display
     // else calculate row with getRowAt function from lib/cellularAutomata
@@ -35,6 +36,31 @@ export function RowViewer({ rule, grid }) {
 
   const handleRowChange = (e) => setRowIndexInput(e.target.value);
   const handleGroupingChange = (e) => setGroupingInput(e.target.value);
+
+  // when user navigates away from row input field
+  const handleRowBlur = () => {
+    // if empty reset to 0
+    if (rowIndexInput === "") {
+      setRowIndexInput("0");
+      return;
+    }
+    // if invalid reset to 0
+    const v = parseInt(rowIndexInput, 10);
+    if (isNaN(v) || v < 0) {
+      setRowIndexInput("0");
+    }
+  };
+
+  // when user navigates away from grouping input field
+  const handleGroupingBlur = () => {
+    // if empty reset to empty
+    if (groupingInput === "") return;
+    // if invalid reset to empty
+    const v = parseInt(groupingInput, 10);
+    if (isNaN(v) || v < 1) {
+      setGroupingInput("");
+    }
+  };
 
   // controlling when control + a is pressed in display box to select only the display box's contents
   const handleKeyDown = useCallback((e) => {
@@ -58,6 +84,7 @@ export function RowViewer({ rule, grid }) {
         min={0}
         value={rowIndexInput}
         onChange={handleRowChange}
+        onBlur={handleRowBlur}
       />
       <label htmlFor="grouping-input">Group:</label>
       <input
@@ -67,6 +94,7 @@ export function RowViewer({ rule, grid }) {
         placeholder="—"
         value={groupingInput}
         onChange={handleGroupingChange}
+        onBlur={handleGroupingBlur}
       />
       <div
         ref={displayRef}
