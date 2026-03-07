@@ -9,7 +9,6 @@ export function GridDisplay({ grid }) {
                 key={colIndex}
                 // cell value will either be 0 or 1 to determine css class background white or black
                 className={`cell ${cell ? "cell-on" : "cell-off"}`}
-                // className={`cell ${cell ? "cell-off" : "cell-on"}`}
               />
             ))}
           </div>

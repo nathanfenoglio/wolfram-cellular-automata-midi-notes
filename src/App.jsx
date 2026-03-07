@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { RuleSelector } from "./components/RuleSelector";
 import { GridDisplay } from "./components/GridDisplay";
+import { RuleVisualization } from "./components/RuleVisualization";
 import { Controls } from "./components/Controls";
 import { RowViewer } from "./components/RowViewer";
 import {
@@ -25,16 +26,14 @@ function App() {
   const handleRuleChange = useCallback((newRule) => {
     setRule(newRule);
     setGrid(createInitialGrid());
+
     const mirrorRule = getReverseRule(newRule);
-    console.log(mirrorRule);
     setMirrorRule(mirrorRule);
 
     const blackWhiteSwappedRule = getSwapBlackWhite(newRule);
-    console.log(blackWhiteSwappedRule);
     setBlackWhiteSwappedRule(blackWhiteSwappedRule);
 
     const reverseSwapBlackWhiteRule = getReverseSwapBlackWhite(newRule);
-    console.log(reverseSwapBlackWhiteRule);
     setReverseSwapBlackWhiteRule(reverseSwapBlackWhiteRule);
   }, []);
 
@@ -65,22 +64,26 @@ function App() {
         <RowViewer rule={rule} grid={grid} />
       </header>
       
-      {/* equivalence rules (the 3 symmetric rules to the current rule being displayed) */}
-      <div className="equivalence-rules-container">
-        {/* mirror equivalence rule */}
-        <div className="rule-container">
-          <label>mirror rule:</label>
-          <p>{mirrorRule}</p>
-        </div>
-        {/* black/white swapped equivalence rule */}
-        <div className="rule-container">
-          <label>black/white swapped rule:</label>
-          <p>{blackWhiteSwappedRule}</p>
-        </div>
-        {/* reversed and black/white swapped equivalence rule */}
-        <div className="rule-container">
-          <label>reverse black/white swapped rule:</label>
-          <p>{reverseSwapBlackWhiteRule}</p>
+      {/* equivalence rules and rule visual representation */}
+      <div className="equivalence-and-rule-visual">
+        {/* visual display of the rule showing all of the possible previous row 3 cell configurations and the outcome cell value of the rule  */}
+        <RuleVisualization rule={rule} />
+        <div className="equivalence-rules-container">
+          {/* mirror equivalence rule */}
+          <div className="rule-container">
+            <label>mirror rule:</label>
+            <p>{mirrorRule}</p>
+          </div>
+          {/* black/white swapped equivalence rule */}
+          <div className="rule-container">
+            <label>black/white swapped rule:</label>
+            <p>{blackWhiteSwappedRule}</p>
+          </div>
+          {/* reversed and black/white swapped equivalence rule */}
+          <div className="rule-container">
+            <label>reverse black/white swapped rule:</label>
+            <p>{reverseSwapBlackWhiteRule}</p>
+          </div>
         </div>
       </div>
 
