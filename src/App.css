@@ -105,6 +105,7 @@ body {
 .row-viewer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -124,6 +125,74 @@ body {
   color: inherit;
 }
 
+/* MIDI controls container */
+.midi-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* user input for scale to cycle through when cell is 1 */
+.notes-input {
+  width: 12rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: inherit;
+}
+
+/* user input for tempo to send midi notes */
+.tempo-input {
+  width: 4rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: inherit;
+}
+
+/* select midi output device */
+.output-select {
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: inherit;
+  min-width: 8rem;
+}
+
+/* output selection disabled if web midi not enabled or no output devices found */
+.output-select:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* send midi button */
+.send-midi-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #333;
+  color: inherit;
+  cursor: pointer;
+}
+
+.send-midi-button:hover:not(:disabled) {
+  border-color: #646cff;
+  background: #404050;
+}
+
+/* disable send midi button if row is not a valid value */
+.send-midi-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* row output box */
 .row-viewer .row-display {
   font-family: monospace;
@@ -141,7 +210,7 @@ body {
 
 
 /* 2nd header row container */
-.equivalence-and-rule-visual {
+.header2-visual {
   padding: 0.1rem 1.5rem;
   background: #242424;
   border-bottom: 1px solid #333;
@@ -198,7 +267,7 @@ body {
 }
 
 /* mirror rule, black/white swapped rule, reverse black/white swapped rule container */
-.equivalence-rules-container {
+.header2-container {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -285,9 +354,22 @@ body {
   }
 
   .rule-selector input[type="number"],
-  .row-viewer input[type="number"] {
+  .row-viewer input[type="number"],
+  .notes-input,
+  .tempo-input,
+  .output-select {
     background: #f9f9f9;
     border-color: #ccc;
+  }
+
+  .send-midi-button {
+    background: #f0f0f0;
+    border-color: #ccc;
+  }
+
+  .send-midi-button:hover:not(:disabled) {
+    background: #e5e5ff;
+    border-color: #646cff;
   }
 
   .row-viewer .row-display {

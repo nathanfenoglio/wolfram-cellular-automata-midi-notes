@@ -61,14 +61,22 @@ function App() {
           onStep={handleStep}
           onReset={handleReset}
         />
-        <RowViewer rule={rule} grid={grid} />
+        {/* <RowViewer rule={rule} grid={grid} /> */}
       </header>
       
+      {/* row input, note grouping input, display specified row, */}
+      {/* midi note scale input, tempo input, midi output selection, send midi button */}
+      <div className="header2-visual">
+        <div className="header2-container"> 
+          <RowViewer rule={rule} grid={grid} />
+        </div>
+      </div>
+
       {/* equivalence rules and rule visual representation */}
-      <div className="equivalence-and-rule-visual">
+      <div className="header2-visual">
         {/* visual display of the rule showing all of the possible previous row 3 cell configurations and the outcome cell value of the rule  */}
         <RuleVisualization rule={rule} />
-        <div className="equivalence-rules-container">
+        <div className="header2-container">
           {/* mirror equivalence rule */}
           <div className="rule-container">
             <label>mirror rule:</label>
