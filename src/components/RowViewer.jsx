@@ -29,6 +29,8 @@ function parseNotesInput(input) {
   return valid.length > 0 ? valid : DEFAULT_NOTES;
 }
 
+// display user's row of cellular automata as 0s 1s
+// send midi notes based on row pattern of 0s 1s converted to user specified scale
 export function RowViewer({ rule, grid }) {
   const [rowIndexInput, setRowIndexInput] = useState("0");
   const [groupingInput, setGroupingInput] = useState("");
