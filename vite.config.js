@@ -6,8 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      "b0ed-2600-1700-640-4100-586f-e09e-1c36-b81a.ngrok-free.app",
-      "nathanfenoglio.github.io/wolfram-cellular-automata-midi-notes/"
+      "b0ed-2600-1700-640-4100-586f-e09e-1c36-b81a.ngrok-free.app"
     ]
   }
 });

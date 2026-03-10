@@ -249,60 +249,59 @@ export function RowViewer({ rule, grid }) {
         {displayValue}
       </div>
       <div className="midi-controls">
-        <label htmlFor="notes-input">MIDI notes:</label>
-        {/* user input for scale to cycle through when cell is 1 */}
-        <input
-          id="notes-input"
-          type="text"
-          className="notes-input"
-          placeholder={DEFAULT_NOTES_STRING}
-          value={notesInput}
-          onChange={handleNotesChange}
-          onBlur={handleNotesBlur}
-        />
-        {/* user input for tempo to send midi notes */}
-        <label htmlFor="tempo-input">Tempo (BPM):</label>
-        <input
-          id="tempo-input"
-          type="number"
-          min={1}
-          // NOT SURE IF I WANT TO MAKE MAX TEMPO 300 BPM...
-          max={300}
-          className="tempo-input"
-          value={tempoInput}
-          onChange={handleTempoChange}
-          onBlur={handleTempoBlur}
-        />
-        {/* select midi output device */}
-        <label htmlFor="output-select">Output:</label>
-        <select
-          id="output-select"
-          className="output-select"
-          value={outputIndex}
-          onChange={(e) => setOutputIndex(Number(e.target.value))}
-          disabled={!webMidiEnabled || outputs.length === 0}
-        >
-          {outputs.length === 0 ? (
-            <option value={0}>
-              {webMidiEnabled ? "No outputs" : "Click SEND MIDI first"}
-            </option>
-          ) : (
-            outputs.map((out, i) => (
-              <option key={out.id} value={i}>
-                {out.name || out.id || `Output ${i}`}
+        <div className="midi-row-notes-tempo">
+          <label htmlFor="notes-input">MIDI notes:</label>
+          <input
+            id="notes-input"
+            type="text"
+            className="notes-input"
+            placeholder={DEFAULT_NOTES_STRING}
+            value={notesInput}
+            onChange={handleNotesChange}
+            onBlur={handleNotesBlur}
+          />
+          <label htmlFor="tempo-input">Tempo (BPM):</label>
+          <input
+            id="tempo-input"
+            type="number"
+            min={1}
+            max={300}
+            className="tempo-input"
+            value={tempoInput}
+            onChange={handleTempoChange}
+            onBlur={handleTempoBlur}
+          />
+        </div>
+        <div className="midi-row-output-send">
+          <label htmlFor="output-select">Output:</label>
+          <select
+            id="output-select"
+            className="output-select"
+            value={outputIndex}
+            onChange={(e) => setOutputIndex(Number(e.target.value))}
+            disabled={!webMidiEnabled || outputs.length === 0}
+          >
+            {outputs.length === 0 ? (
+              <option value={0}>
+                {webMidiEnabled ? "No outputs" : "Click SEND MIDI first"}
               </option>
-            ))
-          )}
-        </select>
-        {/* send midi button */}
-        <button
-          type="button"
-          className="send-midi-button"
-          onClick={handleSendStop}
-          disabled={!isValid}
-        >
-          {isSending ? "STOP" : "SEND MIDI"}
-        </button>
+            ) : (
+              outputs.map((out, i) => (
+                <option key={out.id} value={i}>
+                  {out.name || out.id || `Output ${i}`}
+                </option>
+              ))
+            )}
+          </select>
+          <button
+            type="button"
+            className="send-midi-button"
+            onClick={handleSendStop}
+            disabled={!isValid}
+          >
+            {isSending ? "STOP" : "SEND MIDI"}
+          </button>
+        </div>
       </div>
     </div>
   );
