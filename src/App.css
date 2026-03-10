@@ -125,8 +125,22 @@ body {
   color: inherit;
 }
 
-/* MIDI controls container */
+/* MIDI controls container - full width, stacks below Row/Group/Display */
 .midi-controls {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.midi-row-notes-tempo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.midi-row-output-send {
   display: flex;
   align-items: center;
   gap: 0.5rem;
