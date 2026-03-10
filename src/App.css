@@ -227,11 +227,11 @@ body {
 .header2-visual {
   padding: 0.1rem 1.5rem;
   background: #242424;
-  border-bottom: 1px solid #333;
+  /* border-bottom: 1px solid #333; */
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  /* gap: 1rem; */
 }
 
 /* each of the 8 possible 3 cell configurations and their result cell container */
@@ -240,6 +240,7 @@ body {
   align-items: flex-end;
   gap: 0;
   padding: 0.25rem;
+  margin-top: 10px;
   border: 1px solid #555;
   border-radius: 6px;
   background: #1a1a1a;
@@ -273,10 +274,10 @@ body {
 
 /* container for each of the rule's cells */
 .rule-visual-container .cell {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  min-height: 16px;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  min-height: 14px;
   border: 1px solid #555;
 }
 
