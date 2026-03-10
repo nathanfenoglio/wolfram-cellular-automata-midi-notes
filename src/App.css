@@ -241,6 +241,7 @@ body {
   gap: 0;
   padding: 0.25rem;
   margin-top: 10px;
+  margin-right: 1.5rem;
   border: 1px solid #555;
   border-radius: 6px;
   background: #1a1a1a;
@@ -284,9 +285,11 @@ body {
 /* mirror rule, black/white swapped rule, reverse black/white swapped rule container */
 .header2-container {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   align-items: center;
-  gap: 1rem;
+  /* gap: 1rem; */
+  column-gap: 1rem;
+  row-gap: 0;
 }
 
 /* container for each of the 3 symmetric rules */
