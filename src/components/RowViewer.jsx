@@ -2,8 +2,11 @@ import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { getRowAt } from "../lib/cellularAutomata";
 import { WebMidi } from "webmidi";
 
-const DEFAULT_NOTES = [60, 62, 64, 65, 67, 69, 71, 72];
-const DEFAULT_NOTES_STRING = "60, 62, 64, 65, 67, 69, 71, 72";
+// const DEFAULT_NOTES = [60, 62, 64, 65, 67, 69, 71, 72];
+// const DEFAULT_NOTES_STRING = "60, 62, 64, 65, 67, 69, 71, 72";
+
+const DEFAULT_NOTES = [54, 48, 50, 55, 52, 57, 60, 59];
+const DEFAULT_NOTES_STRING = "54, 48, 50, 55, 52, 57, 60, 59";
 
 // format output of user specified row # with commas and brackets at specified user interval
 // could take this output and use as midi output to send to daw perhaps
