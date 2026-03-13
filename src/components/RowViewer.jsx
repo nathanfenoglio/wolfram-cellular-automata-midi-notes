@@ -56,12 +56,17 @@ export function RowViewer({ rule, grid }) {
   const intervalRef = useRef(null);
   const displayRef = useRef(null);
 
-  // formatted output for user specified row 
-  const displayValue = useMemo(() => {
-    if (!isValid) return "—";
+  // formatted output for user specified row and its length
+  const { displayValue, rowLength } = useMemo(() => {
+    if (!isValid) {
+      return { displayValue: "—", rowLength: 0 };
+    }
     const row =
       rowIndex < grid.length ? grid[rowIndex] : getRowAt(rule, rowIndex);
-    return formatWithGrouping(row, hasGrouping ? grouping : 0);
+    return {
+      displayValue: formatWithGrouping(row, hasGrouping ? grouping : 0),
+      rowLength: row.length,
+    };
   }, [rule, grid, rowIndex, isValid, hasGrouping, grouping]);
 
   // input onChange handlers
@@ -251,6 +256,15 @@ export function RowViewer({ rule, grid }) {
       >
         {displayValue}
       </div>
+      {/* display # of cells in row 
+      (will be the # of 16th notes (or however you think about the note values) before repeat) */}
+      <div>
+        <label className="row-length-label"># row cells</label>
+        <span className="row-length-value">
+          {isValid ? rowLength : "—"}
+        </span>
+      </div>
+
       <div className="midi-controls">
         <div className="midi-row-notes-tempo">
           <label htmlFor="notes-input">MIDI notes:</label>

@@ -114,6 +114,15 @@ body {
   font-size: 0.9rem;
 }
 
+.row-viewer .row-length-value {
+  font-size: 0.85rem;
+  font-family: monospace;
+  padding: 0.1rem 0.25rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #1a1a1a;
+}
+
 /* row input box */
 .row-viewer input[type="number"] {
   width: 3rem;
