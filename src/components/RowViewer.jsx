@@ -264,7 +264,6 @@ export function RowViewer({ rule, grid }) {
           {isValid ? rowLength : "—"}
         </span>
       </div>
-
       <div className="midi-controls">
         <div className="midi-row-notes-tempo">
           <label htmlFor="notes-input">MIDI notes:</label>
