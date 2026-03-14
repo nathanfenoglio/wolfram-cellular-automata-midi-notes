@@ -202,6 +202,22 @@ body {
   cursor: not-allowed;
 }
 
+/* randomize notes order button */
+.randomize-notes-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #333;
+  color: inherit;
+  cursor: pointer;
+}
+
+.randomize-notes-button:hover {
+  border-color: #646cff;
+  background: #404050;
+}
+
 /* send midi button */
 .send-midi-button {
   padding: 0.5rem 1rem;
@@ -403,6 +419,16 @@ body {
   }
 
   .send-midi-button:hover:not(:disabled) {
+    background: #e5e5ff;
+    border-color: #646cff;
+  }
+
+  .randomize-notes-button {
+    background: #f0f0f0;
+    border-color: #ccc;
+  }
+
+  .randomize-notes-button:hover {
     background: #e5e5ff;
     border-color: #646cff;
   }

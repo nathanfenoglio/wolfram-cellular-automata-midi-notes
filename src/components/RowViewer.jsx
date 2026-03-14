@@ -271,6 +271,17 @@ export function RowViewer({ rule, grid }) {
     if (valid.length === 0) setNotesInput(DEFAULT_NOTES_STRING);
   };
 
+  // randomize order of notes when user presses button
+  const handleRandomizeNotes = () => {
+    const notes = parseNotesInput(notesInput);
+    // for each note swap with another random note already in notes
+    for (let i = notes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [notes[i], notes[j]] = [notes[j], notes[i]];
+    }
+    setNotesInput(notes.join(", "));
+  };
+
   return (
     <div className="row-viewer">
       {/* user input for row to display as 0s 1s and send as midi */}
@@ -357,6 +368,14 @@ export function RowViewer({ rule, grid }) {
             onBlur={handleTempoBlur}
           />
         </div>
+        {/* option for user to randomize the order of the midi notes */}
+        <button
+          type="button"
+          className="randomize-notes-button"
+          onClick={handleRandomizeNotes}
+        >
+          randomize notes order
+        </button>
         <div className="midi-row-output-send">
           <label htmlFor="output-select">Output:</label>
           <select
