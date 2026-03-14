@@ -306,7 +306,7 @@ export function RowViewer({ rule, grid }) {
       </div>
       {/* display # of cells in row 
       (will be the # of 16th notes (or however you think about the note values) before repeat) */}
-      <div>
+      <div className="row-length-controls">
         <label className="row-length-label"># row cells</label>
         <span className="row-length-value">
           {isValid ? rowLength : "—"}

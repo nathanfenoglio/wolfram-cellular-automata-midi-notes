@@ -114,6 +114,7 @@ body {
   font-size: 0.9rem;
 }
 
+/* display length of user specified row */
 .row-viewer .row-length-value {
   font-size: 0.85rem;
   font-family: monospace;
@@ -121,6 +122,13 @@ body {
   border: 1px solid #555;
   border-radius: 4px;
   background: #1a1a1a;
+}
+
+/* user specified remove left notes or remove right notes from row */
+.row-length-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* row input box */
