@@ -50,6 +50,8 @@ export function RowViewer({ rule, grid }) {
   const [outputs, setOutputs] = useState([]);
   const [isSending, setIsSending] = useState(false);
   const [webMidiEnabled, setWebMidiEnabled] = useState(false);
+  const [removeFromLeftInput, setRemoveFromLeftInput] = useState("0");
+  const [removeFromRightInput, setRemoveFromRightInput] = useState("0");
 
   // useRef to store interval ID for sending MIDI notes, 
   // and for the display element to handle ctrl + A
@@ -61,13 +63,29 @@ export function RowViewer({ rule, grid }) {
     if (!isValid) {
       return { displayValue: "—", rowLength: 0 };
     }
-    const row =
+    let row =
       rowIndex < grid.length ? grid[rowIndex] : getRowAt(rule, rowIndex);
+    
+    // if user specified to remove notes (the 0s 1s not the midi note values)
+    // from the left or right, remove elements from the left or right of row
+    const trimLeft = Math.max(0, parseInt(removeFromLeftInput, 10) || 0);
+    const trimRight = Math.max(0, parseInt(removeFromRightInput, 10) || 0);
+    row = row.slice(trimLeft, trimRight > 0 ? -trimRight : undefined);
+
     return {
       displayValue: formatWithGrouping(row, hasGrouping ? grouping : 0),
       rowLength: row.length,
     };
-  }, [rule, grid, rowIndex, isValid, hasGrouping, grouping]);
+  }, [ // useMemo dependencies
+    rule,
+    grid,
+    rowIndex,
+    isValid,
+    hasGrouping,
+    grouping,
+    removeFromLeftInput,
+    removeFromRightInput,
+  ]);
 
   // input onChange handlers
   const handleRowChange = (e) => setRowIndexInput(e.target.value);
@@ -75,7 +93,7 @@ export function RowViewer({ rule, grid }) {
   const handleNotesChange = (e) => setNotesInput(e.target.value);
   const handleTempoChange = (e) => setTempoInput(e.target.value);
 
-  // check input when user leaves row index input box
+  // check/set input when user leaves row index input box
   const handleRowBlur = () => {
     if (rowIndexInput === "") {
       setRowIndexInput("0");
@@ -85,22 +103,43 @@ export function RowViewer({ rule, grid }) {
     if (isNaN(v) || v < 0) setRowIndexInput("0");
   };
 
-  // check input when user leaves grouping input box
+  // check/set input when user leaves grouping input box
   const handleGroupingBlur = () => {
     if (groupingInput === "") return;
     const v = parseInt(groupingInput, 10);
     if (isNaN(v) || v < 1) setGroupingInput("");
   };
 
-  // check input when user leaves tempo input box
+  // check/set input when user leaves tempo input box
   const handleTempoBlur = () => {
     if (tempoInput === "") {
       setTempoInput("120");
       return;
     }
     const v = parseInt(tempoInput, 10);
+    // NOT SURE IF I WANT TO LIMIT BPM TO 300...
     if (isNaN(v) || v < 1) setTempoInput("120");
     else if (v > 300) setTempoInput("300");
+  };
+
+  // check/set input when user leaves remove from left input box
+  const handleRemoveFromLeftBlur = () => {
+    if (removeFromLeftInput === "") {
+      setRemoveFromLeftInput("0");
+      return;
+    }
+    const v = parseInt(removeFromLeftInput, 10);
+    if (isNaN(v) || v < 0) setRemoveFromLeftInput("0");
+  };
+
+  // check/set input when user leaves remove from right input box
+  const handleRemoveFromRightBlur = () => {
+    if (removeFromRightInput === "") {
+      setRemoveFromRightInput("0");
+      return;
+    }
+    const v = parseInt(removeFromRightInput, 10);
+    if (isNaN(v) || v < 0) setRemoveFromRightInput("0");
   };
 
   // work around to have ctrl + a highlight all of only the row output box
@@ -116,6 +155,7 @@ export function RowViewer({ rule, grid }) {
     }
   }, []);
 
+  // start or stop sending of midi notes 
   const handleSendStop = useCallback(async () => {
     // stop sending if currently sending
     if (isSending) {
@@ -145,9 +185,15 @@ export function RowViewer({ rule, grid }) {
 
       // if visual of grid has already been calculated for row, just grab it
       // otherwise calculate from cellularAutomata.js getRowAt function
-      const row =
+      let row =
         rowIndex < grid.length ? grid[rowIndex] : getRowAt(rule, rowIndex);
-      // user entered scale to cycle through 
+
+      // remove elements from beginning and/or end of row if user specified
+      const trimLeft = Math.max(0, parseInt(removeFromLeftInput, 10) || 0);
+      const trimRight = Math.max(0, parseInt(removeFromRightInput, 10) || 0);
+      row = row.slice(trimLeft, trimRight > 0 ? -trimRight : undefined);
+
+      // user entered scale to cycle through
       const notes = parseNotesInput(notesInput);
       // user entered tempo BPM defaults to 120, min 1, max 300
       // NOT SURE IF I WANT MAX 300 OR CAN MAKE LARGER
@@ -182,7 +228,7 @@ export function RowViewer({ rule, grid }) {
       console.error("WebMidi error:", err);
       setIsSending(false);
     }
-  }, [
+  }, [ 
     isSending,
     isValid,
     webMidiEnabled,
@@ -192,6 +238,8 @@ export function RowViewer({ rule, grid }) {
     rowIndex,
     notesInput,
     tempoInput,
+    removeFromLeftInput,
+    removeFromRightInput,
   ]); 
   // dependencies for useCallback, includes everything that is used inside the function that comes from outside the function scope
   // will recreate the function if any of these dependencies change, otherwise will reuse the same function instance
@@ -263,7 +311,28 @@ export function RowViewer({ rule, grid }) {
         <span className="row-length-value">
           {isValid ? rowLength : "—"}
         </span>
+        {/* user input for how many notes to remove from left */}
+        <label htmlFor="remove-left-input">remove from left</label>
+        <input
+          id="remove-left-input"
+          type="number"
+          min={0}
+          value={removeFromLeftInput}
+          onChange={(e) => setRemoveFromLeftInput(e.target.value)}
+          onBlur={handleRemoveFromLeftBlur}
+        />
+        {/* user input for how many notes to remove from right */}
+        <label htmlFor="remove-right-input">remove from right</label>
+        <input
+          id="remove-right-input"
+          type="number"
+          min={0}
+          value={removeFromRightInput}
+          onChange={(e) => setRemoveFromRightInput(e.target.value)}
+          onBlur={handleRemoveFromRightBlur}
+        />
       </div>
+
       <div className="midi-controls">
         <div className="midi-row-notes-tempo">
           <label htmlFor="notes-input">MIDI notes:</label>
