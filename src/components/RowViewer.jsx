@@ -208,6 +208,18 @@ export function RowViewer({ rule, grid }) {
       if (intervalRef.current) clearInterval(intervalRef.current);
       intervalRef.current = null;
       setIsSending(false);
+      // send note-off for any notes in notes array that may still be sounding
+      try {
+        const output = WebMidi.outputs[outputIndex];
+        if (output) {
+          const notes = parseNotesInput(notesInput);
+          for (const note of notes) {
+            output.stopNote(note);
+          }
+        }
+      } catch (err) {
+        console.error("WebMidi note-off on stop:", err);
+      }
       return;
     }
 
