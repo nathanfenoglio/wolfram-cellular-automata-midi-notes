@@ -373,7 +373,7 @@ export function RowViewer({ rule, grid }) {
       </div>
       
       {/* cyclically rotate row 0s 1s array to user specified start index */}
-      <div>
+      <div className="start-index-controls">
         <label htmlFor="start-index-input">start index</label>
         <input
           id="start-index-input"

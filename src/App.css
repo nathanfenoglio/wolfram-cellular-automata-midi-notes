@@ -131,6 +131,13 @@ body {
   gap: 0.5rem;
 }
 
+/* user specified start index of row array to be able to cyclically rotate through rhythm */
+.start-index-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* row input box */
 .row-viewer input[type="number"] {
   width: 3rem;
