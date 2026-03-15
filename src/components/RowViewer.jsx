@@ -32,6 +32,19 @@ function parseNotesInput(input) {
   return valid.length > 0 ? valid : DEFAULT_NOTES;
 }
 
+// least common multiple of 2 #s
+function lcm(a, b) {
+  if (a === 0 || b === 0) return 0;
+  // recursive function to get greatest common divisor
+  // if 1st # is less than y then x % y = x and then x and y will be swapped for the next iteration
+  // making it so that you don't need to worry about making the 1st # the larger of the 2 originally
+  // if x % y = 0 then you have found the greatest common divisor and y which will be x in the next iteration 
+  // y will be 0 and x will be the gcd 
+  const gcd = (x, y) => (y === 0 ? x : gcd(y, x % y));
+  // lcm formula
+  return (a * b) / gcd(a, b);
+}
+
 // display user's row of cellular automata as 0s 1s
 // send midi notes based on row pattern of 0s 1s converted to user specified scale
 export function RowViewer({ rule, grid }) {
@@ -58,10 +71,10 @@ export function RowViewer({ rule, grid }) {
   const intervalRef = useRef(null);
   const displayRef = useRef(null);
 
-  // formatted output for user specified row and its length
-  const { displayValue, rowLength } = useMemo(() => {
+  // formatted output for user specified row, its length, and # of hits (1s)
+  const { displayValue, rowLength, hitCount } = useMemo(() => {
     if (!isValid) {
-      return { displayValue: "—", rowLength: 0 };
+      return { displayValue: "—", rowLength: 0, hitCount: 0 };
     }
     let row =
       rowIndex < grid.length ? grid[rowIndex] : getRowAt(rule, rowIndex);
@@ -75,6 +88,7 @@ export function RowViewer({ rule, grid }) {
     return {
       displayValue: formatWithGrouping(row, hasGrouping ? grouping : 0),
       rowLength: row.length,
+      hitCount: row.filter((c) => c === 1).length,
     };
   }, [ // useMemo dependencies
     rule,
@@ -369,13 +383,36 @@ export function RowViewer({ rule, grid }) {
           />
         </div>
         {/* option for user to randomize the order of the midi notes */}
-        <button
-          type="button"
-          className="randomize-notes-button"
-          onClick={handleRandomizeNotes}
-        >
-          randomize notes order
-        </button>
+        <div className="randomize-and-cycle-data">
+          {(() => {
+            const notesCount = parseNotesInput(notesInput).length;
+            const lcmVal = lcm(hitCount, notesCount);
+            // divide least common multiple of # of hits and # of notes
+            // by the # of hits to get 
+            // the # of times before the 1st note of the sequence will start on the 1st hit of the row
+            const repeatsAfter =
+              isValid && hitCount > 0 ? lcmVal / hitCount : null;
+            return (
+              <>
+                <button
+                  type="button"
+                  className="randomize-notes-button"
+                  onClick={handleRandomizeNotes}
+                >
+                  randomize notes order
+                </button>
+                <label className="row-meta-label"># hits</label>
+                <span className="row-meta-value">{isValid ? hitCount : "—"}</span>
+                <label className="row-meta-label"># notes in seq</label>
+                <span className="row-meta-value">{notesCount}</span>
+                <label className="row-meta-label">repeats after</label>
+                <span className="row-meta-value">
+                  {repeatsAfter != null ? repeatsAfter : "—"}
+                </span>
+              </>
+            );
+          })()}
+        </div>
         <div className="midi-row-output-send">
           <label htmlFor="output-select">Output:</label>
           <select

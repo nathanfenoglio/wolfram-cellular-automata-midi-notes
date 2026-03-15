@@ -157,6 +157,21 @@ body {
   gap: 0.5rem;
 }
 
+.randomize-and-cycle-data {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.row-meta-value {
+  font-size: 0.85rem;
+  font-family: monospace;
+  padding: 0.1rem 0.25rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #1a1a1a;
+}
+
 .midi-row-output-send {
   display: flex;
   align-items: center;
@@ -434,6 +449,11 @@ body {
   }
 
   .row-viewer .row-display {
+    background: #f9f9f9;
+    border-color: #ccc;
+  }
+
+  .row-meta-value {
     background: #f9f9f9;
     border-color: #ccc;
   }
