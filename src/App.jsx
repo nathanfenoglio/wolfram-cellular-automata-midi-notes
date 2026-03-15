@@ -57,12 +57,18 @@ function App() {
       <header className="header">
         <h1>Wolfram Cellular Automata</h1>
         <RuleSelector value={rule} onChange={handleRuleChange} />
-        <Controls
-          onStep={handleStep}
-          onReset={handleReset}
-        />
-        {/* <RowViewer rule={rule} grid={grid} /> */}
+        {/* visual display of the rule showing all of the possible previous row 3 cell configurations and the outcome cell value of the rule  */}
+        <RuleVisualization rule={rule} />
       </header>
+      {/* visual step, reset, auto-run controls */}
+      <div className="header2-visual">
+        <div className="header2-container">
+          <Controls 
+            onStep={handleStep}
+            onReset={handleReset}
+          />
+        </div>
+      </div>
       
       {/* row input, note grouping input, display specified row, */}
       {/* midi note scale input, tempo input, midi output selection, send midi button */}
@@ -75,7 +81,6 @@ function App() {
       {/* equivalence rules and rule visual representation */}
       <div className="header2-visual">
         {/* visual display of the rule showing all of the possible previous row 3 cell configurations and the outcome cell value of the rule  */}
-        <RuleVisualization rule={rule} />
         <div className="header2-container">
           {/* mirror equivalence rule */}
           <div className="rule-container">
