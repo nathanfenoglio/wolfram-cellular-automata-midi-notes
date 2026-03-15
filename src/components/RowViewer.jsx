@@ -20,6 +20,23 @@ function formatWithGrouping(row, groupSize) {
   return chunks.join(", ");
 }
 
+// cyclic rotation of 0s 1s row array
+function rotateRowByStartIndex(row, startIndex) {
+  const n = row.length;
+  if (n === 0) return row;
+  // if negative startIndex, 
+  // then (startIndex % n) will be just like the positive version 
+  // (whatever the remainder is) but with a negative sign 
+  // so then it will be within the n range (# of cells in row)
+  // and can add the # of cells in a row (n) to it 
+  // to get to the positive representation of the index counting from the end of the array
+  const k = ((startIndex % n) + n) % n;
+  if (k === 0) return row;
+  // return original row starting at calculated start index k to end
+  // concatenated with the beginning of the array up to the calculated start index k
+  return [...row.slice(k), ...row.slice(0, k)];
+}
+
 // parse comma-separated MIDI note values, return default notes if empty or invalid
 function parseNotesInput(input) {
   if (!input || typeof input !== "string") return DEFAULT_NOTES;
@@ -50,6 +67,9 @@ function lcm(a, b) {
 export function RowViewer({ rule, grid }) {
   const [rowIndexInput, setRowIndexInput] = useState("0");
   const [groupingInput, setGroupingInput] = useState("");
+  const [removeFromLeftInput, setRemoveFromLeftInput] = useState("0");
+  const [removeFromRightInput, setRemoveFromRightInput] = useState("0");
+  const [startIndexInput, setStartIndexInput] = useState("0");
 
   const rowIndex = parseInt(rowIndexInput, 10);
   const isValid = !isNaN(rowIndex) && rowIndex >= 0;
@@ -63,8 +83,6 @@ export function RowViewer({ rule, grid }) {
   const [outputs, setOutputs] = useState([]);
   const [isSending, setIsSending] = useState(false);
   const [webMidiEnabled, setWebMidiEnabled] = useState(false);
-  const [removeFromLeftInput, setRemoveFromLeftInput] = useState("0");
-  const [removeFromRightInput, setRemoveFromRightInput] = useState("0");
 
   // useRef to store interval ID for sending MIDI notes, 
   // and for the display element to handle ctrl + A
@@ -85,6 +103,10 @@ export function RowViewer({ rule, grid }) {
     const trimRight = Math.max(0, parseInt(removeFromRightInput, 10) || 0);
     row = row.slice(trimLeft, trimRight > 0 ? -trimRight : undefined);
 
+    // cyclically rotate row array to user's specified start index
+    const startIndex = parseInt(startIndexInput, 10) || 0;
+    row = rotateRowByStartIndex(row, startIndex);
+
     return {
       displayValue: formatWithGrouping(row, hasGrouping ? grouping : 0),
       rowLength: row.length,
@@ -99,6 +121,7 @@ export function RowViewer({ rule, grid }) {
     grouping,
     removeFromLeftInput,
     removeFromRightInput,
+    startIndexInput,
   ]);
 
   // input onChange handlers
@@ -156,6 +179,15 @@ export function RowViewer({ rule, grid }) {
     if (isNaN(v) || v < 0) setRemoveFromRightInput("0");
   };
 
+  const handleStartIndexBlur = () => {
+    if (startIndexInput === "") {
+      setStartIndexInput("0");
+      return;
+    }
+    const v = parseInt(startIndexInput, 10);
+    if (isNaN(v)) setStartIndexInput("0");
+  };
+
   // work around to have ctrl + a highlight all of only the row output box
   const handleKeyDown = useCallback((e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "a") {
@@ -207,6 +239,10 @@ export function RowViewer({ rule, grid }) {
       const trimRight = Math.max(0, parseInt(removeFromRightInput, 10) || 0);
       row = row.slice(trimLeft, trimRight > 0 ? -trimRight : undefined);
 
+      // cyclically rotate row array to user's specified start index
+      const startIndex = parseInt(startIndexInput, 10) || 0;
+      row = rotateRowByStartIndex(row, startIndex);
+
       // user entered scale to cycle through
       const notes = parseNotesInput(notesInput);
       // user entered tempo BPM defaults to 120, min 1, max 300
@@ -254,9 +290,15 @@ export function RowViewer({ rule, grid }) {
     tempoInput,
     removeFromLeftInput,
     removeFromRightInput,
-  ]); 
+    startIndexInput,
+  ]);
   // dependencies for useCallback, includes everything that is used inside the function that comes from outside the function scope
   // will recreate the function if any of these dependencies change, otherwise will reuse the same function instance
+
+  // reset start index when rule or row index changes
+  useEffect(() => {
+    setStartIndexInput("0");
+  }, [rule, rowIndexInput]);
 
   // cleanup interval on unmount
   useEffect(() => {
@@ -329,6 +371,19 @@ export function RowViewer({ rule, grid }) {
       >
         {displayValue}
       </div>
+      
+      {/* cyclically rotate row 0s 1s array to user specified start index */}
+      <div>
+        <label htmlFor="start-index-input">start index</label>
+        <input
+          id="start-index-input"
+          type="number"
+          value={startIndexInput}
+          onChange={(e) => setStartIndexInput(e.target.value)}
+          onBlur={handleStartIndexBlur}
+        />
+      </div>
+
       {/* display # of cells in row 
       (will be the # of 16th notes (or however you think about the note values) before repeat) */}
       <div className="row-length-controls">
