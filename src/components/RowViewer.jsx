@@ -116,7 +116,7 @@ export function RowViewer({ rule, grid }) {
 
     const ctx = getAudioContext(); // get or create audio context
     const nowSec = ctx.currentTime;
-    // ...
+    // calculate horizon time for scheduling as many notes in that time frame
     const horizonSec = nowSec + SCHEDULER_LOOK_AHEAD_SEC;
 
     // schedule as many midi notes as the recalculated each cycle nextStepTime
@@ -327,11 +327,14 @@ export function RowViewer({ rule, grid }) {
       const notes = parseNotesInput(notesInput);
       // user entered tempo BPM defaults to 120, min 1, max 300
       // NOT SURE IF I WANT MAX 300 OR CAN MAKE LARGER
+      // IDK MIGHT SET IT WAY LOWER I DON'T SEEM TO RUN INTO TROUBLE WITH LOOP BE MIDI <= 170 BPM
+      // OR MAY CHANGE FROM 16TH NOTES TO 8TH NOTES
       const tempo = Math.max(1, Math.min(300, parseInt(tempoInput, 10) || 120));
       // NOT SURE THAT I LIKE HOW THE TEMPO IS BEING HANDLED, IT SEEMS SLOW
       // I DON'T SEE MUCH DIFFERENCE WHEN ADJUSTING WHAT TEMPO IS MULTIPLIED BY
       // ARE THE NOTES BEING RECEIVED BY THE OTHER APPLICATION WITH THE CORRECT TIMING?
-      const stepMs = 60_000 / (tempo * 4); // 16th notes
+      // const stepMs = 60_000 / (tempo * 4); // 16th notes
+      const stepMs = 60_000 / (tempo * 8); // 8th notes
       // const stepMs = 60_000 / (tempo * 0.25); 
 
       const ctx = getAudioContext();
