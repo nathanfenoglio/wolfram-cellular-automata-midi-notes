@@ -8,6 +8,9 @@ import { WebMidi } from "webmidi";
 const DEFAULT_NOTES = [54, 48, 50, 55, 52, 57, 60, 59];
 const DEFAULT_NOTES_STRING = "54, 48, 50, 55, 52, 57, 60, 59";
 
+const SCHEDULER_LOOK_AHEAD_SEC = 0.1;
+const SCHEDULER_TICK_MS = 25; // how often rowScheduler is called
+
 // format output of user specified row # with commas and brackets at specified user interval
 // could take this output and use as midi output to send to daw perhaps
 function formatWithGrouping(row, groupSize) {
@@ -84,10 +87,71 @@ export function RowViewer({ rule, grid }) {
   const [isSending, setIsSending] = useState(false); // is sending midi or not
   const [webMidiEnabled, setWebMidiEnabled] = useState(false); // user must enable WebMidi to allow the browser to access midi devices and send midi messages 
 
-  // useRef to store interval ID for sending MIDI notes, 
-  // and for the display element to handle ctrl + A
-  const intervalRef = useRef(null);
+  // refs for midi scheduler and audio context 
+  // so that they can be accessed and modified inside the runScheduler function 
+  // and cleanup function in useEffect 
+  // without needing to include them in the dependencies of the useCallback for the runScheduler function  
+  // which would cause it to be recreated on every render 
+  // which would cause problems for the timing of the scheduler and midi messages being sent
   const displayRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const schedulerTimeoutRef = useRef(null);
+  const schedulerRef = useRef(null);
+
+  // get or create audio context from the browser
+  function getAudioContext() {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContextRef.current;
+  }
+
+  // looping function every SCHEDULER_TICK_MS 
+  // called in handleSendStop function when user selects to send midi 
+  function runScheduler() {
+    // get scheduler refs current values 
+    // isRunning, nextStepTime, rowStepIndex, noteIndex, row, notes, stepMs, output
+    const s = schedulerRef.current;
+    if (!s || !s.isRunning) return;
+
+    const ctx = getAudioContext(); // get or create audio context
+    const nowSec = ctx.currentTime;
+    // ...
+    const horizonSec = nowSec + SCHEDULER_LOOK_AHEAD_SEC;
+
+    // schedule as many midi notes as the recalculated each cycle nextStepTime
+    // is within the 0.1 second window
+    // SCHEDULER_TICK_MS is 0.25 so will look ahead 4x as far for each tick
+    // creating a sort of buffer to always be able to schedule the note(s) to be played at the correct time
+    // even if browser is busy
+    while (s.nextStepTime < horizonSec) {
+      // nextStepTime was calculated based on how long the previous note would take to play
+      const stepTime = s.nextStepTime;
+      const { row, notes, stepMs, output, rowStepIndex, noteIndex } = s;
+
+      if (row[rowStepIndex] === 1) {
+        const note = notes[noteIndex % notes.length];
+        // calculate difference in the time to play next note and now
+        const delayMs = Math.max(0, (stepTime - nowSec) * 1000);
+        try {
+          // send play note message with time to play in future by delayMs
+          output.playNote(note, { duration: stepMs, time: `+${Math.round(delayMs)}` });
+        } catch (e) {
+          console.error("playNote failed:", e);
+        }
+        s.noteIndex = (noteIndex + 1) % notes.length;
+      }
+
+      s.rowStepIndex = (rowStepIndex + 1) % row.length;
+      // calculate next step's time to wait on how long this note will take to play 
+      s.nextStepTime += stepMs / 1000;
+    }
+
+    // run function every specified SCHEDULER_TICK_MSs
+    if (s.isRunning) {
+      schedulerTimeoutRef.current = setTimeout(runScheduler, SCHEDULER_TICK_MS);
+    }
+  }
 
   // formatted output for user specified row, its length, and # of hits (1s)
   const { displayRow0s1s, rowLength, hitCount } = useMemo(() => {
@@ -205,9 +269,13 @@ export function RowViewer({ rule, grid }) {
   const handleSendStop = useCallback(async () => {
     // stop sending if currently sending
     if (isSending) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      if (schedulerRef.current) schedulerRef.current.isRunning = false;
+      if (schedulerTimeoutRef.current) {
+        clearTimeout(schedulerTimeoutRef.current);
+        schedulerTimeoutRef.current = null;
+      }
       setIsSending(false);
+
       // send note-off for any notes in notes array that may still be sounding
       try {
         const output = WebMidi.outputs[outputIndex];
@@ -266,26 +334,26 @@ export function RowViewer({ rule, grid }) {
       const stepMs = 60_000 / (tempo * 4); // 16th notes
       // const stepMs = 60_000 / (tempo * 0.25); 
 
-      let rowStepIndex = 0;
-      let noteIndex = 0;
+      const ctx = getAudioContext();
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
+
+      // set initial values of schedulerRef to get the loop going
+      schedulerRef.current = {
+        isRunning: true,
+        nextStepTime: ctx.currentTime,
+        rowStepIndex: 0,
+        noteIndex: 0,
+        row,
+        notes,
+        stepMs,
+        output,
+      };
 
       setIsSending(true);
-      // set interval for when midi note will be sent
-      intervalRef.current = setInterval(() => {
-        // send a midi note only when the cell value is 1
-        if (row[rowStepIndex] === 1) {
-          // get note from notes array of possible notes
-          const note = notes[noteIndex % notes.length];
-          // WebMidi.outputs[index_of_output_device].playNote method
-          // 1st param: note can be like "C4" or 0-127
-          // other options available: duration, channels, attack, rawAttack, release, rawRelease, time 
-          output.playNote(note, { duration: stepMs });
-          // increment note index to play next note of user's notes array
-          noteIndex = (noteIndex + 1) % notes.length;
-        }
-        // increment row step index to go to next cell of row to play
-        rowStepIndex = (rowStepIndex + 1) % row.length;
-      }, stepMs);
+      // run midi note send scheduler loop
+      runScheduler();
     } catch (err) {
       console.error("WebMidi error:", err);
       setIsSending(false);
@@ -312,10 +380,19 @@ export function RowViewer({ rule, grid }) {
     setStartIndexInput("0");
   }, [rule, rowIndexInput]);
 
-  // cleanup interval on unmount
   useEffect(() => {
+    // useEffect with no dependencies fires once when the component loads
+    // a return function is fired once when the component unmounts
+    // so this will clear the audio context when the app is closed
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (schedulerRef.current) schedulerRef.current.isRunning = false;
+      if (schedulerTimeoutRef.current) {
+        clearTimeout(schedulerTimeoutRef.current);
+        schedulerTimeoutRef.current = null;
+      }
+      if (audioContextRef.current?.state !== "closed") {
+        audioContextRef.current?.close();
+      }
     };
   }, []);
 
