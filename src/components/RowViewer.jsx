@@ -72,17 +72,17 @@ export function RowViewer({ rule, grid }) {
   const [startIndexInput, setStartIndexInput] = useState("0");
 
   const rowIndex = parseInt(rowIndexInput, 10);
-  const isValid = !isNaN(rowIndex) && rowIndex >= 0;
+  const isValidRow = !isNaN(rowIndex) && rowIndex >= 0;
   const grouping = parseInt(groupingInput, 10);
   const hasGrouping = !isNaN(grouping) && grouping >= 1;
 
   // midi notes, tempo, midi out, etc
   const [notesInput, setNotesInput] = useState(DEFAULT_NOTES_STRING);
   const [tempoInput, setTempoInput] = useState("120"); // default tempo 120 BPM
-  const [outputIndex, setOutputIndex] = useState(0);
-  const [outputs, setOutputs] = useState([]);
-  const [isSending, setIsSending] = useState(false);
-  const [webMidiEnabled, setWebMidiEnabled] = useState(false);
+  const [outputIndex, setOutputIndex] = useState(0); // midi output index from user's available outputs to send midi messages to
+  const [outputs, setOutputs] = useState([]); // all available midi outputs from user's device
+  const [isSending, setIsSending] = useState(false); // is sending midi or not
+  const [webMidiEnabled, setWebMidiEnabled] = useState(false); // user must enable WebMidi to allow the browser to access midi devices and send midi messages 
 
   // useRef to store interval ID for sending MIDI notes, 
   // and for the display element to handle ctrl + A
@@ -90,9 +90,9 @@ export function RowViewer({ rule, grid }) {
   const displayRef = useRef(null);
 
   // formatted output for user specified row, its length, and # of hits (1s)
-  const { displayValue, rowLength, hitCount } = useMemo(() => {
-    if (!isValid) {
-      return { displayValue: "—", rowLength: 0, hitCount: 0 };
+  const { displayRow0s1s, rowLength, hitCount } = useMemo(() => {
+    if (!isValidRow) {
+      return { displayRow0s1s: "—", rowLength: 0, hitCount: 0 };
     }
     let row =
       rowIndex < grid.length ? grid[rowIndex] : getRowAt(rule, rowIndex);
@@ -108,7 +108,7 @@ export function RowViewer({ rule, grid }) {
     row = rotateRowByStartIndex(row, startIndex);
 
     return {
-      displayValue: formatWithGrouping(row, hasGrouping ? grouping : 0),
+      displayRow0s1s: formatWithGrouping(row, hasGrouping ? grouping : 0),
       rowLength: row.length,
       hitCount: row.filter((c) => c === 1).length,
     };
@@ -116,7 +116,7 @@ export function RowViewer({ rule, grid }) {
     rule,
     grid,
     rowIndex,
-    isValid,
+    isValidRow,
     hasGrouping,
     grouping,
     removeFromLeftInput,
@@ -159,7 +159,7 @@ export function RowViewer({ rule, grid }) {
     else if (v > 300) setTempoInput("300");
   };
 
-  // check/set input when user leaves remove from left input box
+  // check/set input when user leaves "remove from left" input box
   const handleRemoveFromLeftBlur = () => {
     if (removeFromLeftInput === "") {
       setRemoveFromLeftInput("0");
@@ -224,7 +224,7 @@ export function RowViewer({ rule, grid }) {
     }
 
     // if user entered row index to send midi messages is not valid, return
-    if (!isValid) return;
+    if (!isValidRow) return;
 
     try {
       if (!webMidiEnabled) {
@@ -292,7 +292,7 @@ export function RowViewer({ rule, grid }) {
     }
   }, [ 
     isSending,
-    isValid,
+    isValidRow,
     webMidiEnabled,
     outputIndex,
     rule,
@@ -381,7 +381,7 @@ export function RowViewer({ rule, grid }) {
         // ctrl + a to highlight just this field work around
         onKeyDown={handleKeyDown}
       >
-        {displayValue}
+        {displayRow0s1s}
       </div>
       
       {/* cyclically rotate row 0s 1s array to user specified start index */}
@@ -401,7 +401,7 @@ export function RowViewer({ rule, grid }) {
       <div className="row-length-controls">
         <label className="row-length-label"># row cells</label>
         <span className="row-length-value">
-          {isValid ? rowLength : "—"}
+          {isValidRow ? rowLength : "—"}
         </span>
         {/* user input for how many notes to remove from left */}
         <label htmlFor="remove-left-input">remove from left</label>
@@ -458,7 +458,7 @@ export function RowViewer({ rule, grid }) {
             // by the # of hits to get 
             // the # of times before the 1st note of the sequence will start on the 1st hit of the row
             const repeatsAfter =
-              isValid && hitCount > 0 ? lcmVal / hitCount : null;
+              isValidRow && hitCount > 0 ? lcmVal / hitCount : null;
             return (
               <>
                 <button
@@ -469,7 +469,7 @@ export function RowViewer({ rule, grid }) {
                   randomize notes order
                 </button>
                 <label className="row-meta-label"># hits</label>
-                <span className="row-meta-value">{isValid ? hitCount : "—"}</span>
+                <span className="row-meta-value">{isValidRow ? hitCount : "—"}</span>
                 <label className="row-meta-label"># notes in seq</label>
                 <span className="row-meta-value">{notesCount}</span>
                 <label className="row-meta-label">repeats after</label>
@@ -505,7 +505,7 @@ export function RowViewer({ rule, grid }) {
             type="button"
             className="send-midi-button"
             onClick={handleSendStop}
-            disabled={!isValid}
+            disabled={!isValidRow}
           >
             {isSending ? "STOP" : "SEND MIDI"}
           </button>
