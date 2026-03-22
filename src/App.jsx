@@ -21,6 +21,7 @@ function App() {
   const [mirrorRule, setMirrorRule] = useState();
   const [blackWhiteSwappedRule, setBlackWhiteSwappedRule] = useState();
   const [reverseSwapBlackWhiteRule, setReverseSwapBlackWhiteRule] = useState();
+  const [isSending, setIsSending] = useState(false);
 
   // reset grid when user changes rule
   const handleRuleChange = useCallback((newRule) => {
@@ -63,9 +64,10 @@ function App() {
       {/* visual step, reset, auto-run controls */}
       <div className="header2-visual">
         <div className="header2-container">
-          <Controls 
+          <Controls
             onStep={handleStep}
             onReset={handleReset}
+            isSending={isSending}
           />
         </div>
       </div>
@@ -74,7 +76,13 @@ function App() {
       {/* midi note scale input, tempo input, midi output selection, send midi button */}
       <div className="header2-visual">
         <div className="header2-container"> 
-          <RowViewer rule={rule} grid={grid} />
+          {/* pass midi note isSending and setIsSending to RowViewer */}
+          <RowViewer
+            rule={rule}
+            grid={grid}
+            isSending={isSending}
+            setIsSending={setIsSending}
+          />
         </div>
       </div>
 

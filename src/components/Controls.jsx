@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 
-export function Controls({ onStep, onReset, isRunning }) {
+export function Controls({ onStep, onReset, isSending }) {
   const [autoRun, setAutoRun] = useState(false);
+
+  // if user is sending midi disable auto-run to midi sending inaccuracies
+  useEffect(() => {
+    if (isSending) setAutoRun(false);
+  }, [isSending]);
 
   useEffect(() => {
     if (!autoRun) return;

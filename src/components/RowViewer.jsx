@@ -67,7 +67,7 @@ function lcm(a, b) {
 
 // display user's row of cellular automata as 0s 1s
 // send midi notes based on row pattern of 0s 1s converted to user specified scale
-export function RowViewer({ rule, grid }) {
+export function RowViewer({ rule, grid, isSending, setIsSending }) {
   const [rowIndexInput, setRowIndexInput] = useState("0");
   const [groupingInput, setGroupingInput] = useState("");
   const [removeFromLeftInput, setRemoveFromLeftInput] = useState("0");
@@ -84,7 +84,6 @@ export function RowViewer({ rule, grid }) {
   const [tempoInput, setTempoInput] = useState("120"); // default tempo 120 BPM
   const [outputIndex, setOutputIndex] = useState(0); // midi output index from user's available outputs to send midi messages to
   const [outputs, setOutputs] = useState([]); // all available midi outputs from user's device
-  const [isSending, setIsSending] = useState(false); // is sending midi or not
   const [webMidiEnabled, setWebMidiEnabled] = useState(false); // user must enable WebMidi to allow the browser to access midi devices and send midi messages 
 
   // refs for midi scheduler and audio context 
@@ -329,6 +328,7 @@ export function RowViewer({ rule, grid }) {
       // NOT SURE IF I WANT MAX 300 OR CAN MAKE LARGER
       // IDK MIGHT SET IT WAY LOWER I DON'T SEEM TO RUN INTO TROUBLE WITH LOOP BE MIDI <= 170 BPM
       // OR MAY CHANGE FROM 16TH NOTES TO 8TH NOTES
+      // THEN I SUPPOSE THE SAFE MAX WOULD BE <= 340 
       const tempo = Math.max(1, Math.min(300, parseInt(tempoInput, 10) || 120));
       // NOT SURE THAT I LIKE HOW THE TEMPO IS BEING HANDLED, IT SEEMS SLOW
       // I DON'T SEE MUCH DIFFERENCE WHEN ADJUSTING WHAT TEMPO IS MULTIPLIED BY
@@ -361,8 +361,9 @@ export function RowViewer({ rule, grid }) {
       console.error("WebMidi error:", err);
       setIsSending(false);
     }
-  }, [ 
+  }, [
     isSending,
+    setIsSending,
     isValidRow,
     webMidiEnabled,
     outputIndex,
