@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { getRowAt } from "../lib/cellularAutomata";
+import { SCALES } from "../lib/scales";
 import { WebMidi } from "webmidi";
 
 const DEFAULT_NOTES = [54, 48, 50, 55, 52, 57, 60, 59];
@@ -78,6 +79,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
 
   // midi notes, tempo, midi out, etc
   const [notesInput, setNotesInput] = useState(DEFAULT_NOTES_STRING);
+  const [scaleSelection, setScaleSelection] = useState("");
   const [tempoInput, setTempoInput] = useState("240"); // default tempo 240 BPM
   const [outputIndex, setOutputIndex] = useState(0); // midi output index from user's available outputs to send midi messages to
   const [outputs, setOutputs] = useState([]); // all available midi outputs from user's device
@@ -189,6 +191,15 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
   const handleGroupingChange = (e) => setGroupingInput(e.target.value);
   const handleNotesChange = (e) => setNotesInput(e.target.value);
   const handleTempoChange = (e) => setTempoInput(e.target.value);
+
+  const handleScaleSelect = (e) => {
+    const scaleName = e.target.value;
+    setScaleSelection(scaleName);
+    if (scaleName && SCALES[scaleName]) {
+      const notes = SCALES[scaleName];
+      setNotesInput(notes.join(", "));
+    }
+  };
 
   // transpose all notes down by 1 when user presses button
   const handleTransposeDown = () => {
@@ -423,6 +434,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
     // set notes as default notes if input is blank
     if (trimmed === "") {
       setNotesInput(DEFAULT_NOTES_STRING);
+      setScaleSelection("");
       return;
     }
     // validate note array input
@@ -437,6 +449,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
     if (valid.length === 0) {
       setNotesInput(DEFAULT_NOTES_STRING);
     }
+    setScaleSelection("");
   };
 
   // randomize order of notes when user presses button
@@ -448,6 +461,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
       [notes[i], notes[j]] = [notes[j], notes[i]];
     }
     setNotesInput(notes.join(", "));
+    setScaleSelection("");
   };
 
   return (
@@ -529,6 +543,22 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
       </div>
 
       <div className="midi-controls">
+        <div className="midi-row-scale-select">
+          <label htmlFor="scale-select">Scale:</label>
+          <select
+            id="scale-select"
+            className="scale-select"
+            value={scaleSelection}
+            onChange={handleScaleSelect}
+          >
+            <option value="">Select a scale...</option>
+            {Object.keys(SCALES).sort().map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="midi-row-notes-tempo">
           {/* MIDI notes input */}
           <label htmlFor="notes-input">MIDI notes:</label>

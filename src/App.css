@@ -178,6 +178,25 @@ body {
   min-width: 0;
 }
 
+.midi-row-scale-select {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.scale-select {
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: inherit;
+  min-width: 12rem;
+  max-width: 100%;
+}
+
 .midi-row-notes-tempo {
   display: flex;
   align-items: center;
@@ -489,6 +508,7 @@ body {
   .rule-selector input[type="number"],
   .row-viewer input[type="number"],
   .notes-input,
+  .scale-select,
   .tempo-input,
   .transpose-btn,
   .output-select {
