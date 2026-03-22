@@ -504,7 +504,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
           {isValidRow ? rowLength : "—"}
         </span>
         {/* remove from left/remove from right */}
-        <div>
+        <div className="remove-from-left-right-controls">
           {/* user input for how many notes to remove from left */}
           <label htmlFor="remove-left-input">remove from left</label>
           <input
@@ -542,7 +542,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             onBlur={handleNotesBlur}
           />
           {/* transpose midi notes up/down buttons */}
-          <div>
+          <div className="midi-transpose-controls">
             {/* transpose */}
             <label>transpose:</label>
             {/* transpose midi notes down arrow button */}

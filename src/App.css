@@ -140,6 +140,15 @@ body {
   gap: 0.5rem;
 }
 
+/* remove left or remove right controls */
+.remove-from-left-right-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
 /* user specified start index of row array to be able to cyclically rotate through rhythm */
 .start-index-controls {
   display: flex;
@@ -176,6 +185,15 @@ body {
   gap: 0.5rem;
   min-width: 0;
 }
+
+.midi-transpose-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
 
 .randomize-and-cycle-data {
   display: flex;
