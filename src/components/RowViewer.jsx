@@ -503,6 +503,9 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
         <span className="row-length-value">
           {isValidRow ? rowLength : "—"}
         </span>
+
+        <div>
+
         {/* user input for how many notes to remove from left */}
         <label htmlFor="remove-left-input">remove from left</label>
         <input
@@ -523,6 +526,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
           onChange={(e) => setRemoveFromRightInput(e.target.value)}
           onBlur={handleRemoveFromRightBlur}
         />
+        </div>
       </div>
 
       <div className="midi-controls">
@@ -538,30 +542,36 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             onChange={handleNotesChange}
             onBlur={handleNotesBlur}
           />
-          {/* transpose */}
-          <label>transpose:</label>
-          {/* transpose midi notes down arrow button */}
-          <button
-            type="button"
-            className="transpose-btn transpose-down-btn"
-            onClick={handleTransposeDown}
-            aria-label="Transpose down"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path d="M8 11L3 6h10l-5 5z" />
-            </svg>
-          </button>
-          {/* transpose midi notes up arrow button */}
-          <button
-            type="button"
-            className="transpose-btn transpose-up-btn"
-            onClick={handleTransposeUp}
-            aria-label="Transpose up"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path d="M8 5l5 5H3l5-5z" />
-            </svg>
-          </button>
+
+          <div>
+          
+            {/* transpose */}
+            <label>transpose:</label>
+            {/* transpose midi notes down arrow button */}
+            <button
+              type="button"
+              className="transpose-btn transpose-down-btn"
+              onClick={handleTransposeDown}
+              aria-label="Transpose down"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 11L3 6h10l-5 5z" />
+              </svg>
+            </button>
+            {/* transpose midi notes up arrow button */}
+            <button
+              type="button"
+              className="transpose-btn transpose-up-btn"
+              onClick={handleTransposeUp}
+              aria-label="Transpose up"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 5l5 5H3l5-5z" />
+              </svg>
+            </button>
+          
+          </div>
+
           {/* Tempo (BPM) */}
           <label htmlFor="tempo-input">Tempo (BPM):</label>
           <input
