@@ -2,9 +2,6 @@ import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { getRowAt } from "../lib/cellularAutomata";
 import { WebMidi } from "webmidi";
 
-// const DEFAULT_NOTES = [60, 62, 64, 65, 67, 69, 71, 72];
-// const DEFAULT_NOTES_STRING = "60, 62, 64, 65, 67, 69, 71, 72";
-
 const DEFAULT_NOTES = [54, 48, 50, 55, 52, 57, 60, 59];
 const DEFAULT_NOTES_STRING = "54, 48, 50, 55, 52, 57, 60, 59";
 
@@ -192,6 +189,26 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
   const handleGroupingChange = (e) => setGroupingInput(e.target.value);
   const handleNotesChange = (e) => setNotesInput(e.target.value);
   const handleTempoChange = (e) => setTempoInput(e.target.value);
+
+  // transpose all notes down by 1 when user presses button
+  const handleTransposeDown = () => {
+    const notes = parseNotesInput(notesInput);
+    if (notes.length === 0) return;
+    // do not allow trasnpsing down past note 0
+    if (Math.min(...notes) === 0) return;
+    const newNotes = notes.map((n) => n - 1);
+    setNotesInput(newNotes.join(", "));
+  };
+
+  // transpose all notes up by 1 when user presses button
+  const handleTransposeUp = () => {
+    const notes = parseNotesInput(notesInput);
+    if (notes.length === 0) return;
+    // do not allow transposing up past note 127
+    if (Math.max(...notes) === 127) return;
+    const newNotes = notes.map((n) => n + 1);
+    setNotesInput(newNotes.join(", "));
+  };
 
   // check/set input when user leaves row index input box
   const handleRowBlur = () => {
@@ -417,7 +434,9 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
       .filter(Boolean)
       .map((s) => parseInt(s, 10))
       .filter((n) => !isNaN(n) && n >= 0 && n <= 127);
-    if (valid.length === 0) setNotesInput(DEFAULT_NOTES_STRING);
+    if (valid.length === 0) {
+      setNotesInput(DEFAULT_NOTES_STRING);
+    }
   };
 
   // randomize order of notes when user presses button
@@ -508,6 +527,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
 
       <div className="midi-controls">
         <div className="midi-row-notes-tempo">
+          {/* MIDI notes input */}
           <label htmlFor="notes-input">MIDI notes:</label>
           <input
             id="notes-input"
@@ -518,6 +538,31 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             onChange={handleNotesChange}
             onBlur={handleNotesBlur}
           />
+          {/* transpose */}
+          <label>transpose:</label>
+          {/* transpose midi notes down arrow button */}
+          <button
+            type="button"
+            className="transpose-btn transpose-down-btn"
+            onClick={handleTransposeDown}
+            aria-label="Transpose down"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 11L3 6h10l-5 5z" />
+            </svg>
+          </button>
+          {/* transpose midi notes up arrow button */}
+          <button
+            type="button"
+            className="transpose-btn transpose-up-btn"
+            onClick={handleTransposeUp}
+            aria-label="Transpose up"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 5l5 5H3l5-5z" />
+            </svg>
+          </button>
+          {/* Tempo (BPM) */}
           <label htmlFor="tempo-input">Tempo (BPM):</label>
           <input
             id="tempo-input"

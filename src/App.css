@@ -207,6 +207,25 @@ body {
   color: inherit;
 }
 
+/* transpose up/down buttons */
+.transpose-btn {
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transpose-btn:hover {
+  border-color: #646cff;
+  background: #404050;
+}
+
 /* select midi output device */
 .output-select {
   padding: 0.35rem 0.5rem;
@@ -430,6 +449,7 @@ body {
   .row-viewer input[type="number"],
   .notes-input,
   .tempo-input,
+  .transpose-btn,
   .output-select {
     background: #f9f9f9;
     border-color: #ccc;
