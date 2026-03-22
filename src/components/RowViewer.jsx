@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { getRowAt } from "../lib/cellularAutomata";
-import { SCALES } from "../lib/scales";
+import { SCALES } from "../lib/scales"; // dictionary from scales.js of a bunch of scales and their midi note values 
 import { WebMidi } from "webmidi";
 
 const DEFAULT_NOTES = [54, 48, 50, 55, 52, 57, 60, 59];
@@ -514,7 +514,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
       </div>
 
       {/* display # of cells in row 
-      (will be the # of 16th notes (or however you think about the note values) before repeat) */}
+      (will be the # of 8th notes (or however you think about the note values) before repeat) */}
       <div className="row-length-controls">
         <label className="row-length-label"># row cells</label>
         <span className="row-length-value">
@@ -555,6 +555,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             value={scaleSelection}
             onChange={handleScaleSelect}
           >
+            {/* map all scales to dropdown menu (alphabetically sorted) */}
             <option value="">Select a scale...</option>
             {Object.keys(SCALES).sort().map((name) => (
               <option key={name} value={name}>
@@ -615,7 +616,8 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             onBlur={handleTempoBlur}
           />
         </div>
-        {/* option for user to randomize the order of the midi notes */}
+        {/* various data points of how the scale and rhythm interact 
+        option for user to randomize the order of the midi notes */}
         <div className="randomize-and-cycle-data">
           {(() => {
             const notesCount = parseNotesInput(notesInput).length;
@@ -627,6 +629,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
               isValidRow && hitCount > 0 ? lcmVal / hitCount : null;
             return (
               <>
+                {/* randomize notes button */}
                 <button
                   type="button"
                   className="randomize-notes-button"
@@ -634,10 +637,13 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
                 >
                   randomize notes order
                 </button>
+                {/* # of hits (notes not rests) */}
                 <label className="row-meta-label"># hits</label>
                 <span className="row-meta-value">{isValidRow ? hitCount : "—"}</span>
+                {/* # of notes in MIDI notes sequence */}
                 <label className="row-meta-label"># notes in seq</label>
                 <span className="row-meta-value">{notesCount}</span>
+                {/* repeats after (# of cycles through rhythm to where the 1st note of midi note sequence is on the 1st hit again) */}
                 <label className="row-meta-label">repeats after</label>
                 <span className="row-meta-value">
                   {repeatsAfter != null ? repeatsAfter : "—"}

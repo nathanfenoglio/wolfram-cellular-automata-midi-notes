@@ -1,3 +1,6 @@
+// pretty rad generated script to 
+// grab all of the key value pairs of scale name : note values
+// from some_scales.xlsx spreadsheet and then write them to a .js file to be able to be used right away 
 import XLSX from "xlsx";
 import { writeFileSync } from "fs";
 import { fileURLToPath } from "url";
