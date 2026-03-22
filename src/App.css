@@ -59,7 +59,7 @@ body {
 
 /* input box for user to enter rule 0-255 */
 .rule-selector input[type="number"] {
-  width: 3.5rem;
+  width: 4.0rem;
   padding: 0.35rem 0.5rem;
   font-size: 1rem;
   border: 1px solid #555;

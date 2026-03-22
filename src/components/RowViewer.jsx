@@ -503,29 +503,28 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
         <span className="row-length-value">
           {isValidRow ? rowLength : "—"}
         </span>
-
+        {/* remove from left/remove from right */}
         <div>
-
-        {/* user input for how many notes to remove from left */}
-        <label htmlFor="remove-left-input">remove from left</label>
-        <input
-          id="remove-left-input"
-          type="number"
-          min={0}
-          value={removeFromLeftInput}
-          onChange={(e) => setRemoveFromLeftInput(e.target.value)}
-          onBlur={handleRemoveFromLeftBlur}
-        />
-        {/* user input for how many notes to remove from right */}
-        <label htmlFor="remove-right-input">remove from right</label>
-        <input
-          id="remove-right-input"
-          type="number"
-          min={0}
-          value={removeFromRightInput}
-          onChange={(e) => setRemoveFromRightInput(e.target.value)}
-          onBlur={handleRemoveFromRightBlur}
-        />
+          {/* user input for how many notes to remove from left */}
+          <label htmlFor="remove-left-input">remove from left</label>
+          <input
+            id="remove-left-input"
+            type="number"
+            min={0}
+            value={removeFromLeftInput}
+            onChange={(e) => setRemoveFromLeftInput(e.target.value)}
+            onBlur={handleRemoveFromLeftBlur}
+          />
+          {/* user input for how many notes to remove from right */}
+          <label htmlFor="remove-right-input">remove from right</label>
+          <input
+            id="remove-right-input"
+            type="number"
+            min={0}
+            value={removeFromRightInput}
+            onChange={(e) => setRemoveFromRightInput(e.target.value)}
+            onBlur={handleRemoveFromRightBlur}
+          />
         </div>
       </div>
 
@@ -542,9 +541,8 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             onChange={handleNotesChange}
             onBlur={handleNotesBlur}
           />
-
+          {/* transpose midi notes up/down buttons */}
           <div>
-          
             {/* transpose */}
             <label>transpose:</label>
             {/* transpose midi notes down arrow button */}
@@ -569,9 +567,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
                 <path d="M8 5l5 5H3l5-5z" />
               </svg>
             </button>
-          
           </div>
-
           {/* Tempo (BPM) */}
           <label htmlFor="tempo-input">Tempo (BPM):</label>
           <input
