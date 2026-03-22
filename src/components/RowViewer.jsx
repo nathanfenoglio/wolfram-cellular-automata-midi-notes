@@ -6,7 +6,7 @@ import { WebMidi } from "webmidi";
 const DEFAULT_NOTES = [54, 48, 50, 55, 52, 57, 60, 59];
 const DEFAULT_NOTES_STRING = "54, 48, 50, 55, 52, 57, 60, 59";
 
-const SCHEDULER_LOOK_AHEAD_SEC = 0.1;
+const SCHEDULER_LOOK_AHEAD_SEC = 0.1; // how far ahead midi notes will be scheduled in the while loop in runScheduler
 const SCHEDULER_TICK_MS = 25; // how often rowScheduler is called
 
 // format output of user specified row # with commas and brackets at specified user interval
@@ -59,11 +59,12 @@ function lcm(a, b) {
   // if x % y = 0 then you have found the greatest common divisor and y which will be x in the next iteration 
   // y will be 0 and x will be the gcd 
   const gcd = (x, y) => (y === 0 ? x : gcd(y, x % y));
+  // least common multiple will be the product of the 2 #s divided by their greatest common divisor
   // lcm formula
   return (a * b) / gcd(a, b);
 }
 
-// display user's row of cellular automata as 0s 1s
+// display user's row of cellular automata as 0s 1s and all sorts of other data and controls for user to manipulate
 // send midi notes based on row pattern of 0s 1s converted to user specified scale
 export function RowViewer({ rule, grid, isSending, setIsSending }) {
   const [rowIndexInput, setRowIndexInput] = useState("0");
@@ -79,7 +80,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
 
   // midi notes, tempo, midi out, etc
   const [notesInput, setNotesInput] = useState(DEFAULT_NOTES_STRING);
-  const [scaleSelection, setScaleSelection] = useState("");
+  const [scaleSelection, setScaleSelection] = useState(""); // dropdown menu scale selection
   const [tempoInput, setTempoInput] = useState("240"); // default tempo 240 BPM
   const [outputIndex, setOutputIndex] = useState(0); // midi output index from user's available outputs to send midi messages to
   const [outputs, setOutputs] = useState([]); // all available midi outputs from user's device
@@ -137,9 +138,11 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
         } catch (e) {
           console.error("playNote failed:", e);
         }
+        // set next note index for next note
         s.noteIndex = (noteIndex + 1) % notes.length;
       }
 
+      // set next row step index (next hit or rest in time) 
       s.rowStepIndex = (rowStepIndex + 1) % row.length;
       // calculate next step's time to wait on how long this note will take to play 
       s.nextStepTime += stepMs / 1000;
@@ -192,6 +195,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
   const handleNotesChange = (e) => setNotesInput(e.target.value);
   const handleTempoChange = (e) => setTempoInput(e.target.value);
 
+  // set notes to value in SCALES dictionary for user selected scale
   const handleScaleSelect = (e) => {
     const scaleName = e.target.value;
     setScaleSelection(scaleName);
@@ -270,6 +274,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
     if (isNaN(v) || v < 0) setRemoveFromRightInput("0");
   };
 
+  // check/set input when user leaves start index input box
   const handleStartIndexBlur = () => {
     if (startIndexInput === "") {
       setStartIndexInput("0");
@@ -449,7 +454,6 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
     if (valid.length === 0) {
       setNotesInput(DEFAULT_NOTES_STRING);
     }
-    setScaleSelection("");
   };
 
   // randomize order of notes when user presses button
@@ -461,7 +465,6 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
       [notes[i], notes[j]] = [notes[j], notes[i]];
     }
     setNotesInput(notes.join(", "));
-    setScaleSelection("");
   };
 
   return (
@@ -544,6 +547,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
 
       <div className="midi-controls">
         <div className="midi-row-scale-select">
+          {/* scale selection dropdown menu */}
           <label htmlFor="scale-select">Scale:</label>
           <select
             id="scale-select"
