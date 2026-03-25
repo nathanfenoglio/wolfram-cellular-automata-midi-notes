@@ -56,7 +56,8 @@ function App() {
     <div className="app">
       {/* rule input, step/reset controls, auto run option, display row 0, 1s */}
       <header className="header">
-        <h1>Wolfram Cellular Automata</h1>
+        <h1>1D Cellular Automata Midi Sequencer</h1>
+        {/* <h1>Midi Note Sequencer</h1> */}
         <RuleSelector value={rule} onChange={handleRuleChange} />
         {/* visual display of the rule showing all of the possible previous row 3 cell configurations and the outcome cell value of the rule  */}
         <RuleVisualization rule={rule} />
