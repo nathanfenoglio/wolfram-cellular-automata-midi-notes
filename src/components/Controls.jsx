@@ -29,6 +29,18 @@ export function Controls({ onStep, onReset, isSending }) {
         />
         Auto-run
       </label>
+      {/* link to website for user to view tutorial page */}
+      <button
+        onClick={() =>
+          window.open(
+            "https://www.nathan-fenoglio.com/projects/midiCellularAutomata",
+            "_blank",
+            "noopener,noreferrer"
+          )
+        }
+      >
+        TUTORIAL
+      </button>
     </div>
   );
 }
