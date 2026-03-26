@@ -67,10 +67,10 @@ function lcm(a, b) {
 // display user's row of cellular automata as 0s 1s and all sorts of other data and controls for user to manipulate
 // send midi notes based on row pattern of 0s 1s converted to user specified scale
 export function RowViewer({ rule, grid, isSending, setIsSending }) {
-  const [rowIndexInput, setRowIndexInput] = useState("0");
+  const [rowIndexInput, setRowIndexInput] = useState("16");
   const [groupingInput, setGroupingInput] = useState("");
   const [removeFromLeftInput, setRemoveFromLeftInput] = useState("0");
-  const [removeFromRightInput, setRemoveFromRightInput] = useState("0");
+  const [removeFromRightInput, setRemoveFromRightInput] = useState("1");
   const [startIndexInput, setStartIndexInput] = useState("0");
 
   const rowIndex = parseInt(rowIndexInput, 10);
