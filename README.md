@@ -13,4 +13,4 @@ https://www.nathan-fenoglio.com/projects/midiCellularAutomata
 # explore creating interesting rhythms/melodies derived from Stephen Wolfram's 1D Cellular Automata
 # send midi notes from the web browser to your DAW or any connected midi device    
 
-![alt_image](https://github.com/nathanfenoglio/wolfram-cellular-automata-midi-notes/tree/master/readme_images/cellular_automata_midi_seq_full.jpg)
+![alt_image](https://github.com/nathanfenoglio/wolfram-cellular-automata-midi-notes/raw/master/readme_images/cellular_automata_midi_seq_full.jpg)
