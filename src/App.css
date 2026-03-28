@@ -225,6 +225,13 @@ body {
   min-width: 0;
 }
 
+.tempo-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-width: 0;
+}
 
 .randomize-and-cycle-data {
   display: flex;

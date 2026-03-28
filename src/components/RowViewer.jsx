@@ -608,29 +608,31 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
               </svg>
             </button>
           </div>
-          {/* Tempo (BPM) */}
-          <label htmlFor="tempo-input">Tempo (BPM):</label>
-          <input
-            id="tempo-input"
-            type="number"
-            min={1}
-            max={300}
-            className="tempo-input"
-            value={tempoInput}
-            onChange={handleTempoChange}
-            onBlur={handleTempoBlur}
-          />
-          {/* beat division 1/16, 1/8, 1/4 */}
-          <select
-            className="tempo-division-select"
-            aria-label="Note value per grid step"
-            value={noteDivision}
-            onChange={(e) => setNoteDivision(e.target.value)}
-          >
-            <option value="1/16">1/16</option>
-            <option value="1/8">1/8</option>
-            <option value="1/4">1/4</option>
-          </select>
+          <div className="tempo-controls">
+            {/* Tempo (BPM) */}
+            <label htmlFor="tempo-input">Tempo (BPM):</label>
+            <input
+              id="tempo-input"
+              type="number"
+              min={1}
+              max={300}
+              className="tempo-input"
+              value={tempoInput}
+              onChange={handleTempoChange}
+              onBlur={handleTempoBlur}
+            />
+            {/* beat division 1/16, 1/8, 1/4 */}
+            <select
+              className="tempo-division-select"
+              aria-label="Note value per grid step"
+              value={noteDivision}
+              onChange={(e) => setNoteDivision(e.target.value)}
+            >
+              <option value="1/16">1/16</option>
+              <option value="1/8">1/8</option>
+              <option value="1/4">1/4</option>
+            </select>
+          </div>
         </div>
         {/* various data points of how the scale and rhythm interact 
         option for user to randomize the order of the midi notes */}
