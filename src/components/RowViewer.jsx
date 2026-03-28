@@ -9,6 +9,13 @@ const DEFAULT_NOTES_STRING = "54, 48, 50, 55, 52, 57, 60, 59";
 const SCHEDULER_LOOK_AHEAD_SEC = 0.1; // how far ahead midi notes will be scheduled in the while loop in runScheduler
 const SCHEDULER_TICK_MS = 25; // how often rowScheduler is called
 
+// map of dropdown label to divisor in stepMs = 60_000 / (tempo * division) 
+const NOTE_DIVISION_MAP = {
+  "1/16": 4,
+  "1/8": 2,
+  "1/4": 1,
+};
+
 // format output of user specified row # with commas and brackets at specified user interval
 // could take this output and use as midi output to send to daw perhaps
 function formatWithGrouping(row, groupSize) {
@@ -81,7 +88,8 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
   // midi notes, tempo, midi out, etc
   const [notesInput, setNotesInput] = useState(DEFAULT_NOTES_STRING);
   const [scaleSelection, setScaleSelection] = useState(""); // dropdown menu scale selection
-  const [tempoInput, setTempoInput] = useState("240"); // default tempo 240 BPM
+  const [tempoInput, setTempoInput] = useState("120"); // default tempo 120 BPM
+  const [noteDivision, setNoteDivision] = useState("1/16"); // default note divison 1/16
   const [outputIndex, setOutputIndex] = useState(0); // midi output index from user's available outputs to send midi messages to
   const [outputs, setOutputs] = useState([]); // all available midi outputs from user's device
   const [webMidiEnabled, setWebMidiEnabled] = useState(false); // user must enable WebMidi to allow the browser to access midi devices and send midi messages 
@@ -245,12 +253,12 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
   // check/set input when user leaves tempo input box
   const handleTempoBlur = () => {
     if (tempoInput === "") {
-      setTempoInput("240");
+      setTempoInput("120");
       return;
     }
     const v = parseInt(tempoInput, 10);
     // NOT SURE IF I WANT TO LIMIT BPM TO 300...
-    if (isNaN(v) || v < 1) setTempoInput("240");
+    if (isNaN(v) || v < 1) setTempoInput("120");
     else if (v > 300) setTempoInput("300");
   };
 
@@ -357,18 +365,14 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
 
       // user entered scale to cycle through
       const notes = parseNotesInput(notesInput);
-      // user entered tempo BPM defaults to 240, min 1, max 300
+      // user entered tempo BPM defaults to 120, min 1, max 300
       // NOT SURE IF I WANT MAX 300 OR CAN MAKE LARGER
       // IDK MIGHT SET IT WAY LOWER I DON'T SEEM TO RUN INTO TROUBLE WITH LOOP BE MIDI <= 170 BPM
-      // OR MAY CHANGE FROM 16TH NOTES TO 8TH NOTES
       // THEN I SUPPOSE THE SAFE MAX WOULD BE <= 340 
-      const tempo = Math.max(1, Math.min(300, parseInt(tempoInput, 10) || 240));
-      // NOT SURE THAT I LIKE HOW THE TEMPO IS BEING HANDLED, IT SEEMS SLOW
-      // I DON'T SEE MUCH DIFFERENCE WHEN ADJUSTING WHAT TEMPO IS MULTIPLIED BY
-      // ARE THE NOTES BEING RECEIVED BY THE OTHER APPLICATION WITH THE CORRECT TIMING?
-      const stepMs = 60_000 / (tempo * 4); // 16th notes
-      // const stepMs = 60_000 / (tempo * 2); // 8th notes 
-      // const stepMs = 60_000 / (tempo * 1); // 4th notes 
+      const tempo = Math.max(1, Math.min(300, parseInt(tempoInput, 10) || 120));
+      // convert division using dictionary
+      const division = NOTE_DIVISION_MAP[noteDivision] ?? 4;
+      const stepMs = 60_000 / (tempo * division);
 
       const ctx = getAudioContext();
       if (ctx.state === "suspended") {
@@ -405,6 +409,7 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
     rowIndex,
     notesInput,
     tempoInput,
+    noteDivision,
     removeFromLeftInput,
     removeFromRightInput,
     startIndexInput,
@@ -615,6 +620,17 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
             onChange={handleTempoChange}
             onBlur={handleTempoBlur}
           />
+          {/* beat division 1/16, 1/8, 1/4 */}
+          <select
+            className="tempo-division-select"
+            aria-label="Note value per grid step"
+            value={noteDivision}
+            onChange={(e) => setNoteDivision(e.target.value)}
+          >
+            <option value="1/16">1/16</option>
+            <option value="1/8">1/8</option>
+            <option value="1/4">1/4</option>
+          </select>
         </div>
         {/* various data points of how the scale and rhythm interact 
         option for user to randomize the order of the midi notes */}

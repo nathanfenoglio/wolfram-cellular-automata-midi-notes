@@ -197,6 +197,18 @@ body {
   max-width: 100%;
 }
 
+/* note division next to BPM; same look as scale-select but narrow */
+.tempo-division-select {
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1a1a1a;
+  color: inherit;
+  min-width: 4.5rem;
+  max-width: 100%;
+}
+
 .midi-row-notes-tempo {
   display: flex;
   align-items: center;
@@ -509,6 +521,7 @@ body {
   .row-viewer input[type="number"],
   .notes-input,
   .scale-select,
+  .tempo-division-select,
   .tempo-input,
   .transpose-btn,
   .output-select {
