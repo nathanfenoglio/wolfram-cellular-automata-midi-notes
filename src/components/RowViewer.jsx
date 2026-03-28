@@ -366,11 +366,9 @@ export function RowViewer({ rule, grid, isSending, setIsSending }) {
       // NOT SURE THAT I LIKE HOW THE TEMPO IS BEING HANDLED, IT SEEMS SLOW
       // I DON'T SEE MUCH DIFFERENCE WHEN ADJUSTING WHAT TEMPO IS MULTIPLIED BY
       // ARE THE NOTES BEING RECEIVED BY THE OTHER APPLICATION WITH THE CORRECT TIMING?
-      // const stepMs = 60_000 / (tempo * 4); // 16th notes
+      const stepMs = 60_000 / (tempo * 4); // 16th notes
       // const stepMs = 60_000 / (tempo * 2); // 8th notes 
-      const stepMs = 60_000 / (tempo * 1); // 4th notes 
-
-      // const stepMs = 60_000 / (tempo * 0.25); 
+      // const stepMs = 60_000 / (tempo * 1); // 4th notes 
 
       const ctx = getAudioContext();
       if (ctx.state === "suspended") {
