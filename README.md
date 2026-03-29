@@ -16,7 +16,4 @@ https://www.nathan-fenoglio.com/projects/midiCellularAutomata
 ![alt_image](https://github.com/nathanfenoglio/wolfram-cellular-automata-midi-notes/raw/master/readme_images/cellular_automata_midi_seq_full.jpg)
 
 # view demo
-
-Click the image below to watch on YouTube.
-
 [Watch demo on YouTube](https://www.youtube.com/watch?v=4Zc-mo71nYo)
