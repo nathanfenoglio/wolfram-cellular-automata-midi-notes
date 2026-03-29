@@ -14,3 +14,7 @@ https://www.nathan-fenoglio.com/projects/midiCellularAutomata
 # send midi notes from the web browser to your DAW or any connected midi device    
 
 ![alt_image](https://github.com/nathanfenoglio/wolfram-cellular-automata-midi-notes/raw/master/readme_images/cellular_automata_midi_seq_full.jpg)
+
+# view demo
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4Zc-mo71nYo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
