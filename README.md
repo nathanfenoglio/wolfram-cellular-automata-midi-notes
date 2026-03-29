@@ -20,5 +20,3 @@ https://www.nathan-fenoglio.com/projects/midiCellularAutomata
 Click the image below to watch on YouTube.
 
 [Watch demo on YouTube](https://www.youtube.com/watch?v=4Zc-mo71nYo)
-
-[![Demo video](https://img.youtube.com/vi/4Zc-mo71nYo/maxresdefault.jpg)](https://www.youtube.com/watch?v=4Zc-mo71nYo)
